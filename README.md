@@ -39,7 +39,7 @@ When writing your exploration, the following requirements must be met.
 
 **🔀 Workflow**
 - Make pull requests and request code reviews.
-- Use the Git/GitHub guidelines. If your code is simple and short, then you may work in one branch and merge into `dev` with one PR. If there are a few development steps then consider breaking the code down into smaller issues, branches and PRs.
+- Use the [Nesta Git/GitHub guidelines](https://github.com/nestauk/github_support/blob/dev/guidelines/README.md). If your code is simple and short, then you may work in one branch and merge into `dev` with one PR. If there are a few development steps then consider breaking the code down into smaller issues, branches and PRs.
 
 **💾 Data**
 - It is preferable that data are stored on S3.
