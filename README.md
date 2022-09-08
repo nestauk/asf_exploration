@@ -12,6 +12,11 @@ Each exploration is in its own sub-directory, which can be navigated using the D
 < Short description of project and links to any key resources >
 
 
+## 🎮 User guidelines
+
+1. Use the directory above to find the exploration that you are looking for.
+2. Create an environment for that exploration. This will probably involve running `conda create -n <exploration>_<name> python=3` and installing some requirements, but check each exploration for its installation instructions.
+
 ## 📝  Contributor guidelines
 
 To add a new exploration to this repository:
