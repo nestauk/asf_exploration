@@ -27,9 +27,10 @@ To add a new exploration to this repository:
 2. Create an issue for the exploration. For example, _Exploration of RECC complaints data_.
 3. Create a new branch from `dev` and check it out with `git checkout -b <issue number>_<short>_<exploration>_<name>`
 4. Create a subdirectory for this exploration.
+   a. Add a `requirements.txt` file to the subdirectory, with the line `-r ../requirements_dev.txt` in it.
+   b. Run `pip install -r requirements.txt && pre-commit install`, which will install relevant styling pre-commit checks.
 5. Write and commit all code, data and documentation inside this sub-directory.
    a. Make sure to add a `README.md`.
-   b. Make sure to have a `requirements.txt` file in the subdirectory, which contains all relevant packages for the code, as well as adding the line `-r ../requirements_dev.txt`, which will install packages to help adhere to style guidelines.
 6. Once development is finished, add the name and description of the exploration to the Directory above.
 7. Create a pull request into `dev`.
 
