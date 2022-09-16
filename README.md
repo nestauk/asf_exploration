@@ -1,8 +1,8 @@
-# Explorations for A Sustainable Future
+# Explorations for A Sustainable Future (ASF)
 
-**A place for exploratory and micro data science projects for Nesta's Sustainable Future Mission**
+**A place for exploratory and micro data science projects for Nesta's ASF mission.**
 
-This repository is for work that is very small and self-contained, is not part of a specific Sustainable Future project or is exploratory in nature. Examples of what might be included are exploring the potential for a new dataset, testing out a modelling approach or handling an ad-hoc request for data analysis.
+This repository is for work that is small and self-contained, is not part of specific ASF projects or is exploratory in nature. Examples of what might be included are exploring the potential for a new dataset, testing out a modelling approach or handling an ad-hoc request for data analysis.
 
 Each exploration is in its own sub-directory, which can be navigated using the Directory below. Contributing guidelines are below.
 
@@ -15,7 +15,8 @@ Each exploration is in its own sub-directory, which can be navigated using the D
 ## 🎮 User guidelines
 
 1. Use the directory above to find the exploration that you are looking for.
-2. Create an environment for that exploration. This will probably involve running `conda create -n <exploration>_<name> python=3` and installing some requirements, but check each exploration for its installation instructions.
+2. Clone this repository.
+3. Create the environment for that exploration. This will probably involve running `conda create -n <exploration>_<name> python=3` and installing some requirements specified in the sub-directory. Each exploration should have its own installation instructions.
 
 ## 📝  Contributor guidelines
 
