@@ -1,0 +1,8 @@
+flake8
+flake8-black
+flake8-import-order
+flake8-bandit
+flake8-bugbear
+black
+pre-commit
+pre-commit-hooks
