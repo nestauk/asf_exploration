@@ -10,6 +10,9 @@ def get_property_data(id, format="long"):
         wide_data = (
             raw_property_data
             .assign(
+                # some duplicate (sensor, datetime) pairs
+                # todo: find out why
+                # for now, add a count to avoid duplicate indices
                 row = (
                     raw_property_data
                     .groupby(['sensorName', 'Datetime'])

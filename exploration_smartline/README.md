@@ -21,3 +21,11 @@
 ## Quirks and observations
 - There are duplicate records for some sensors and datetimes (see e.g. property `0109`, `Front Room - Temperature` sensor, datetime `2020-10-01 19:58:00.0000000`)
 - Need to standardise `PCF` as some values have floating point issues (some values appearing as `0.000124` are actually `0.000124230728`, others are `0.0001242307279999`)
+
+## Points for clarification
+- Why the duplicates?
+- Some measurements look very precise (e.g. first `Front Room - Temperature` observation in property `0109` is `23.4208`) - what is their actual precision?
+- Seems to be a lot of missing data (looking at e.g. the 'wide' form of property `0109` data) - why is this? What are the actual frequencies of the individual sensors?
+- What are the different categories for `Accomodation_Type` in `properties.csv`?
+- Is `PCF` the same for each type of sensor? Is it independent of time and property?
+- How to interpret `Value`/`PCF`/`Unit` - is it the case that `Value * PCF` is equal to the value in the units specified by `Unit`?
