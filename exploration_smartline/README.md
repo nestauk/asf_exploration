@@ -20,7 +20,9 @@
 
 ## Quirks and observations
 - There are duplicate records for some sensors and datetimes (see e.g. property `0109`, `Front Room - Temperature` sensor, datetime `2020-10-01 19:58:00.0000000`)
+- Some datetimes are missing altogether (e.g. property `0109`, datetime `2020-12-31 23:56:00.0000000`)
 - Need to standardise `PCF` as some values have floating point issues (some values appearing as `0.000124` are actually `0.000124230728`, others are `0.0001242307279999`)
+- Gas and water meter readings reset at `65000`
 
 ## Points for clarification
 - Why the duplicates?

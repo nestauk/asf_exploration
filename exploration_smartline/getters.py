@@ -1,20 +1,31 @@
 import pandas as pd
 
 def get_property_data(id, format="long"):
-    
-    raw_property_data = pd.read_csv(
+    """Read in the sensor data file for a particular property.
+
+    Args:
+        id (str): 4-digit property ID.
+        format (str, optional): Whether to return the data as-is with
+        one row for each individual sensor measurement ("long")
+        or processed to give one row for each datatime ("wide").
+        Defaults to "long".
+
+    Returns:
+        pd.DataFrame: Property sensor data.
+    """
+    long_data = pd.read_csv(
         "inputs/smartline_data_request_0002/tbl" + str(id) + ".csv"
     )
     
     if format=="wide":
         wide_data = (
-            raw_property_data
+            long_data
             .assign(
                 # some duplicate (sensor, datetime) pairs
                 # todo: find out why
                 # for now, add a count to avoid duplicate indices
                 row = (
-                    raw_property_data
+                    long_data
                     .groupby(['sensorName', 'Datetime'])
                     .cumcount()
                 )
@@ -26,4 +37,4 @@ def get_property_data(id, format="long"):
         
         return wide_data
     else:
-        return raw_property_data
+        return long_data
