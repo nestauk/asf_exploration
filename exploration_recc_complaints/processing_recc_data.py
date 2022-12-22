@@ -29,7 +29,7 @@ def camel_case_columns(df: pd.DataFrame):
     df.columns = cols
 
 
-def unify_ashp_expressions(text: str) -> str:
+def replace_ashp_expressions(text: str) -> str:
     """
     Replaces "air source heat pump" by "ashp" in text.
     """
@@ -57,7 +57,7 @@ def process_complaint_summary(data: pd.DataFrame) -> pd.DataFrame:
 
     raw_recc_data["processed_complaint_summary"] = raw_recc_data[
         "processed_complaint_summary"
-    ].apply(unify_ashp_expressions)
+    ].apply(replace_ashp_expressions)
 
     raw_recc_data["complaint_length"] = raw_recc_data[
         "processed_complaint_summary"
