@@ -1,0 +1,9 @@
+pandas
+altair
+matplotlib
+seaborn
+boto3
+ipykernel
+openpyxl
+nltk
+dataframe_image
