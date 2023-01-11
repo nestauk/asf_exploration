@@ -5,7 +5,6 @@ Functions to download and get RECC complaints data.
 # package imports
 import boto3
 import os
-import logging
 import pandas as pd
 import config
 
@@ -25,9 +24,11 @@ def download_recc_data_from_s3():
     Creates inputs folder (if does not exist) and downloads RECC data from S3
     and stores it in local inputs path (if not already there).
     """
-    print("\nWe're downloading the data for you, if not already in your local inputs folder.\n")
+    print(
+        "\nWe're downloading the data for you, if not already in your local inputs folder.\n"
+    )
     if not os.path.exists(inputs_local_path):
-        os.mkdir(inputs_local_path)
+        os.makedirs(inputs_local_path)
 
     if not os.path.exists(inputs_local_path + raw_recc_data_filename_xlsx):
         s3 = boto3.resource("s3")
@@ -36,12 +37,12 @@ def download_recc_data_from_s3():
             s3_path + raw_recc_data_filename_xlsx,
             inputs_local_path + raw_recc_data_filename_xlsx,
         )
-        print(
-            "Download of <{}> is complete!\n".format(raw_recc_data_filename_xlsx)
-        )
+        print("Download of <{}> is complete!\n".format(raw_recc_data_filename_xlsx))
     else:
         print(
-            "File <{}> already in local inputs folder!\n".format(raw_recc_data_filename_xlsx)
+            "File <{}> already in local inputs folder!\n".format(
+                raw_recc_data_filename_xlsx
+            )
         )
 
 
@@ -83,4 +84,6 @@ def get_processed_recc_data() -> pd.DataFrame:
     Returns:
         A csv file with processed RECC complaints data.
     """
-    return pd.read_csv(outputs_local_path_data + processed_recc_data_filename, index_col=0)
+    return pd.read_csv(
+        outputs_local_path_data + processed_recc_data_filename, index_col=0
+    )

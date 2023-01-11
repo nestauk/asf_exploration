@@ -20,6 +20,7 @@ outputs_local_path_data = config.outputs_local_path_data
 variants_same_expression = config.variants_same_expression
 categories_short_names = config.categories_short_names
 
+
 def camel_case_columns(df: pd.DataFrame):
     """
     Transforms column names in pandas dataframe into lower and camel case.
@@ -29,13 +30,15 @@ def camel_case_columns(df: pd.DataFrame):
     cols = [c.replace(" ", "_") for c in cols]
     df.columns = cols
 
-def deal_with_fit(text:str) -> str:
+
+def deal_with_fit(text: str) -> str:
     """
     Replaces 'FiT' by "feed in tariff.
     We do this separately from merges_expression_variations() as we do not
     want to replace the word 'fit' by 'feed in tariff'. 
     """
     return text.replace("FiT", "feed in tariff")
+
 
 def merges_expression_variations(text: str) -> str:
     """
@@ -45,6 +48,7 @@ def merges_expression_variations(text: str) -> str:
     for expression in variants_same_expression.keys():
         text = text.replace(expression, variants_same_expression[expression])
     return text
+
 
 def process_complaint_summary(data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -67,21 +71,17 @@ def process_complaint_summary(data: pd.DataFrame) -> pd.DataFrame:
         "processed_complaint_summary"
     ].str.lower()
 
-    data["processed_complaint_summary"] = data[
-        "processed_complaint_summary"
-    ].apply(merges_expression_variations)
+    data["processed_complaint_summary"] = data["processed_complaint_summary"].apply(
+        merges_expression_variations
+    )
 
-    data["complaint_length"] = data[
-        "processed_complaint_summary"
-    ].str.len()
+    data["complaint_length"] = data["processed_complaint_summary"].str.len()
 
     data["tokens"] = data["processed_complaint_summary"].apply(
         lambda x: re.sub("[^A-Za-z0-9]+", " ", x)
     )
 
-    data["tokens"] = data["tokens"].apply(
-        lambda x: word_tokenize(x)
-    )
+    data["tokens"] = data["tokens"].apply(lambda x: word_tokenize(x))
 
     data["stems"] = data["tokens"].apply(stemming)
 
@@ -151,10 +151,14 @@ def changes_to_categories(data: pd.DataFrame) -> pd.DataFrame:
         Processed dataframe.
     """
     data["categories"].fillna("No category specified; ", inplace=True)
-    data["categories"] = data["categories"].apply(lambda x: x+"; " if not x.endswith("; ") else x)
+    data["categories"] = data["categories"].apply(
+        lambda x: x + "; " if not x.endswith("; ") else x
+    )
     data["short_categories"] = data["categories"].copy()
     for cat in categories_short_names.keys():
-        data["short_categories"] = data["short_categories"].apply(lambda x: x.replace(cat, categories_short_names[cat]))
+        data["short_categories"] = data["short_categories"].apply(
+            lambda x: x.replace(cat, categories_short_names[cat])
+        )
     return data
 
 
@@ -173,21 +177,14 @@ def process_recc_data(data: pd.DataFrame):
 
     data = process_complaint_summary(data)
 
-    data = create_dummy_variables_and_total(
-        data, "technologies", "tech"
-    )
+    data = create_dummy_variables_and_total(data, "technologies", "tech")
 
     data = changes_to_categories(data)
 
-    data = create_dummy_variables_and_total(
-        data, "short_categories", "category"
-    )
-
-    if not os.path.exists(outputs_local_path):
-        os.mkdir(outputs_local_path)
+    data = create_dummy_variables_and_total(data, "short_categories", "category")
 
     if not os.path.exists(outputs_local_path_data):
-        os.mkdir(outputs_local_path_data)
+        os.makedirs(outputs_local_path_data)
 
     data.to_csv(outputs_local_path_data + processed_recc_data_filename)
 

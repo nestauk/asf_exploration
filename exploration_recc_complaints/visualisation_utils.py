@@ -2,7 +2,7 @@
 Utility functions to visualise data.
 """
 
-#package imports
+# package imports
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -12,6 +12,7 @@ import dataframe_image as dfi
 import math
 import config
 from wordcloud import WordCloud
+
 
 def set_spines():
     """
@@ -47,7 +48,8 @@ def set_plotting_styles():
     mpl.rcParams["legend.fontsize"] = config.fontsize_normal
     mpl.rcParams["figure.titlesize"] = config.fontsize_title
 
-def pandas_df_to_figure(df:pd.DataFrame, folder:str, figure_name:str):
+
+def pandas_df_to_figure(df: pd.DataFrame, folder: str, figure_name: str):
     """
     Saves pandas DataFrame as a figure.
 
@@ -56,9 +58,10 @@ def pandas_df_to_figure(df:pd.DataFrame, folder:str, figure_name:str):
         folder: folder where the figure is going to be stored
         figure_name: figure name
     """
-    dfi.export(df, folder+figure_name)
+    dfi.export(df, folder + figure_name)
 
-def max_value_to_show(values:pd.Series) -> list[int]:
+
+def max_value_to_show(values: pd.Series) -> list[int]:
     """
     Computes max value to show on plot based on max value found in data
     and order of magnitude.
@@ -76,16 +79,17 @@ def max_value_to_show(values:pd.Series) -> list[int]:
     """
     max_value = int(values.max())
     max_as_string = str(max_value)
-    order_magnitude = 10**(len(max_as_string)-1)
+    order_magnitude = 10 ** (len(max_as_string) - 1)
 
-    if max_value%10==0 and max_value==values.max():
+    if max_value % 10 == 0 and max_value == values.max():
         max_to_show = max_value
     else:
-        max_to_show = (int(max_as_string[0])+1)*order_magnitude
+        max_to_show = (int(max_as_string[0]) + 1) * order_magnitude
 
     return [max_to_show, order_magnitude]
 
-def compute_bins(values:pd.Series)->range:
+
+def compute_bins(values: pd.Series) -> range:
     """
     Automatically computes bins for an histogram given a pandas series with all possible values.
 
@@ -95,11 +99,12 @@ def compute_bins(values:pd.Series)->range:
         The bins as a range.
     """
     bins_max, order_magnitude = max_value_to_show(values)
-    bins_increment = math.ceil(order_magnitude/10)
+    bins_increment = math.ceil(order_magnitude / 10)
 
     return range(0, bins_max, bins_increment)
 
-def add_bar_values(bar_values:pd.Series):
+
+def add_bar_values(bar_values: pd.Series):
     """
     Adds bar values to horizontal bar plots.
 
@@ -109,17 +114,19 @@ def add_bar_values(bar_values:pd.Series):
     max_x = max_value_to_show(bar_values)[0]
     for i, v in enumerate(bar_values):
         round_value = round(v)
-        if v==max_x:
-            pos_x = v - 0.05*v
+        if v == max_x:
+            pos_x = v - 0.05 * v
         else:
-            pos_x = v + 0.01*v
-        if round_value<1:
-            plt.text(pos_x, i-0.25, "<1%", fontsize=config.fontsize_small)
+            pos_x = v + 0.01 * v
+        if round_value < 1:
+            plt.text(pos_x, i - 0.25, "<1%", fontsize=config.fontsize_small)
         else:
-            plt.text(pos_x, i-0.25, str(round_value)+"%", fontsize=config.fontsize_small)
+            plt.text(
+                pos_x, i - 0.25, str(round_value) + "%", fontsize=config.fontsize_small
+            )
 
 
-def horizontal_bar_plot(data:pd.DataFrame, y_var:str, x_var:str):
+def horizontal_bar_plot(data: pd.DataFrame, y_var: str, x_var: str):
     """
     Creates a horizontal bar plot.
 
@@ -128,15 +135,16 @@ def horizontal_bar_plot(data:pd.DataFrame, y_var:str, x_var:str):
         y_var: variable in the y axis
         x_var: variable in the x axis/width of the bar plot
     """
-    plt.figure(figsize=(config.figure_size_x_big,config.figure_size_y))
-    plt.barh(y = data[y_var], width = data[x_var], color = config.default_colour)
+    plt.figure(figsize=(config.figure_size_x_big, config.figure_size_y))
+    plt.barh(y=data[y_var], width=data[x_var], color=config.default_colour)
     max_x = max_value_to_show(data[x_var])[0]
     plt.xlim(0, max_x)
 
     if config.display_bar_values:
         add_bar_values(data[x_var])
 
-def plotting_complaints_by_dummies(data:pd.DataFrame, by:str):
+
+def plotting_complaints_by_dummies(data: pd.DataFrame, by: str):
     """
     Plots the number of complaints by a set of dummy variables
 
@@ -147,13 +155,26 @@ def plotting_complaints_by_dummies(data:pd.DataFrame, by:str):
 
     data["short_index"] = data["index"].str.split(":").str[1]
 
-    horizontal_bar_plot(data, "short_index", "percent_complaints") 
-    plt.title("Percentage of complaints by "+by)
-    
-    plt.tight_layout()
-    plt.savefig(config.outputs_local_path_figures+"complaints_by_"+by.replace(" ","_")+".png", dpi = config.dpi)
+    horizontal_bar_plot(data, "short_index", "percent_complaints")
+    plt.title("Percentage of complaints by " + by)
 
-def wordcloud(data:str | pd.DataFrame, stopwords:list, variant_name:str, generate_from_text:bool=True, max_words:int=25):
+    plt.tight_layout()
+    plt.savefig(
+        config.outputs_local_path_figures
+        + "complaints_by_"
+        + by.replace(" ", "_")
+        + ".png",
+        dpi=config.dpi,
+    )
+
+
+def wordcloud(
+    data: str | pd.DataFrame,
+    stopwords: list,
+    variant_name: str,
+    generate_from_text: bool = True,
+    max_words: int = 25,
+):
     """
     Generates a wordcloud image and displays generate image.
 
@@ -165,15 +186,27 @@ def wordcloud(data:str | pd.DataFrame, stopwords:list, variant_name:str, generat
            or from a tf-idf matrix (False). Defaults to True.
         max_words: max number of tokens/n-grams to add to the wordcloud
     """
-    wordcloud = WordCloud(font_path = config.font_path_ttf, width=config.wordcloud_width, height=config.wordcloud_height, margin=0, collocations = True,
-                            stopwords=stopwords, background_color="white",
-                            max_words=max_words)
+    wordcloud = WordCloud(
+        font_path=config.font_path_ttf,
+        width=config.wordcloud_width,
+        height=config.wordcloud_height,
+        margin=0,
+        collocations=True,
+        stopwords=stopwords,
+        background_color="white",
+        max_words=max_words,
+    )
     if generate_from_text:
         wordcloud = wordcloud.generate(data)
     else:
-        wordcloud = wordcloud.generate_from_frequencies(frequencies=dict(data["tf_idf"]))
+        wordcloud = wordcloud.generate_from_frequencies(
+            frequencies=dict(data["tf_idf"])
+        )
 
-    #plt.figure(figsize=(20,10))
+    # plt.figure(figsize=(20,10))
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.savefig(config.outputs_local_path_figures+"wordcloud_"+variant_name+".png", dpi = config.dpi)
+    plt.savefig(
+        config.outputs_local_path_figures + "wordcloud_" + variant_name + ".png",
+        dpi=config.dpi,
+    )

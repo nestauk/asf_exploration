@@ -5,6 +5,7 @@ The **Renewable Energy Consumer Code (RECC)** shared complaints data on **Air So
 ## The work we did 📝
 
 - **Processed RECC data**
+
 Run `python3 /exploration_recc_complaints/processing_recc_data.py` to process the data. Processed data is stored under `/asf_exploration/exploration_recc_complaints/outputs/data`
 
 - **Basic descriptive analysis**
@@ -12,16 +13,18 @@ Run `python3 /exploration_recc_complaints/processing_recc_data.py` to process th
 Run `python3 /exploration_recc_complaints/descriptive_analysis.py` to do descriptive analysis. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures`
 
 - **Looking at specific keywords and expressions of interest**
+
 Run `python3 /exploration_recc_complaints/keyword.py` to do keyword and expressions analysis. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures`
 
 - **Analysing top n-grams in complaints text**
+
 Run `python3 /exploration_recc_complaints/top_ngrams_analysis.py` to analyse top tokens and n-grams in complaints data. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures`
 
 ## Set up 🛠️
 Open your terminal and follow the instructions:
 1. **Clone this repo:** `git clone git@github.com:nestauk/asf_exploration.git`
 
-2. **Navigate to this exploration's folder:** `cd exploration_recc_complaints`
+2. **Navigate to this exploration's folder:** `cd asf_exploration/exploration_recc_complaints`
 
 3. **Create your conda environment:** `conda create --name exploration_recc_complaints python=3.9`
 
