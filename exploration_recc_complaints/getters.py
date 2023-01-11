@@ -15,7 +15,7 @@ s3_bucket = config.s3_bucket
 s3_path = config.s3_path
 raw_recc_data_filename_xlsx = config.raw_recc_data_filename_xlsx
 raw_recc_data_filename_csv = config.raw_recc_data_filename_csv
-outputs_local_path = config.outputs_local_path
+outputs_local_path_data = config.outputs_local_path_data
 processed_recc_data_filename = config.processed_recc_data_filename
 
 
@@ -25,6 +25,7 @@ def download_recc_data_from_s3():
     Creates inputs folder (if does not exist) and downloads RECC data from S3
     and stores it in local inputs path (if not already there).
     """
+    print("\nWe're downloading the data for you, if not already in your local inputs folder.\n")
     if not os.path.exists(inputs_local_path):
         os.mkdir(inputs_local_path)
 
@@ -35,12 +36,12 @@ def download_recc_data_from_s3():
             s3_path + raw_recc_data_filename_xlsx,
             inputs_local_path + raw_recc_data_filename_xlsx,
         )
-        logging.info(
-            "Download of <{}> is complete!".format(raw_recc_data_filename_xlsx)
+        print(
+            "Download of <{}> is complete!\n".format(raw_recc_data_filename_xlsx)
         )
     else:
-        logging.info(
-            "File <{}> already in local folder!".format(raw_recc_data_filename_xlsx)
+        print(
+            "File <{}> already in local inputs folder!\n".format(raw_recc_data_filename_xlsx)
         )
 
 
@@ -72,7 +73,7 @@ def get_raw_recc_data() -> pd.DataFrame:
     Returns:
         A csv file with raw RECC complaints data.
     """
-    return pd.read_csv(inputs_local_path + raw_recc_data_filename_csv)
+    return pd.read_csv(inputs_local_path + raw_recc_data_filename_csv, index_col=0)
 
 
 def get_processed_recc_data() -> pd.DataFrame:
@@ -82,4 +83,4 @@ def get_processed_recc_data() -> pd.DataFrame:
     Returns:
         A csv file with processed RECC complaints data.
     """
-    return pd.read_csv(outputs_local_path + processed_recc_data_filename)
+    return pd.read_csv(outputs_local_path_data + processed_recc_data_filename, index_col=0)

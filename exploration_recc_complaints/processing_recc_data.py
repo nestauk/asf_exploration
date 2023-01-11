@@ -8,16 +8,17 @@ import getters
 import pandas as pd
 import os
 import re
-import nltk
 from datetime import datetime
+from nltk import word_tokenize
+from text_analysis_utils import stemming, lemmatising
 
 
 # paths and file names
-raw_recc_data_filename_xlsx = config.raw_recc_data_filename_xlsx
-raw_recc_data_filename_csv = config.raw_recc_data_filename_csv
-outputs_local_path = config.outputs_local_path
 processed_recc_data_filename = config.processed_recc_data_filename
-
+outputs_local_path = config.outputs_local_path
+outputs_local_path_data = config.outputs_local_path_data
+variants_same_expression = config.variants_same_expression
+categories_short_names = config.categories_short_names
 
 def camel_case_columns(df: pd.DataFrame):
     """
@@ -28,21 +29,29 @@ def camel_case_columns(df: pd.DataFrame):
     cols = [c.replace(" ", "_") for c in cols]
     df.columns = cols
 
+def deal_with_fit(text:str) -> str:
+    """
+    Replaces 'FiT' by "feed in tariff.
+    We do this separately from merges_expression_variations() as we do not
+    want to replace the word 'fit' by 'feed in tariff'. 
+    """
+    return text.replace("FiT", "feed in tariff")
 
-def replace_ashp_expressions(text: str) -> str:
+def merges_expression_variations(text: str) -> str:
     """
-    Replaces "air source heat pump" by "ashp" in text.
+    Merges together different variations of the same expression.
+    E.g.: Replaces "air source heat pump" by "ashp" in text.
     """
-    text = text.replace("air source heat pump (ashp)", "ashp")
-    text = text.replace("air source heat pump", "ashp")
+    for expression in variants_same_expression.keys():
+        text = text.replace(expression, variants_same_expression[expression])
     return text
-
 
 def process_complaint_summary(data: pd.DataFrame) -> pd.DataFrame:
     """
     Processes complaint summary variable by:
+    - Dealing with "FiT" expression;
     - Creating new variable with lower case complaint text;
-    - Unifying air source heat pump expressions;
+    - Merging together different air source heat pump expressions;
     - Creating a new variable with number of characters in complaint;
     - Creating a variable with the complaint summary tokens.
 
@@ -51,25 +60,32 @@ def process_complaint_summary(data: pd.DataFrame) -> pd.DataFrame:
     Returns:
         The processed dataframe.
     """
-    raw_recc_data["processed_complaint_summary"] = raw_recc_data[
-        "complaint_summary"
+
+    data["processed_complaint_summary"] = data["complaint_summary"].apply(deal_with_fit)
+
+    data["processed_complaint_summary"] = data[
+        "processed_complaint_summary"
     ].str.lower()
 
-    raw_recc_data["processed_complaint_summary"] = raw_recc_data[
+    data["processed_complaint_summary"] = data[
         "processed_complaint_summary"
-    ].apply(replace_ashp_expressions)
+    ].apply(merges_expression_variations)
 
-    raw_recc_data["complaint_length"] = raw_recc_data[
+    data["complaint_length"] = data[
         "processed_complaint_summary"
     ].str.len()
 
-    raw_recc_data["tokens"] = raw_recc_data["processed_complaint_summary"].apply(
+    data["tokens"] = data["processed_complaint_summary"].apply(
         lambda x: re.sub("[^A-Za-z0-9]+", " ", x)
     )
 
-    raw_recc_data["tokens"] = raw_recc_data["tokens"].apply(
-        lambda x: nltk.word_tokenize(x)
+    data["tokens"] = data["tokens"].apply(
+        lambda x: word_tokenize(x)
     )
+
+    data["stems"] = data["tokens"].apply(stemming)
+
+    data["lemmas"] = data["tokens"].apply(lemmatising)
 
     return data
 
@@ -125,8 +141,9 @@ def extract_info_from_date(data: pd.DataFrame) -> pd.DataFrame:
 
 def changes_to_categories(data: pd.DataFrame) -> pd.DataFrame:
     """
-    Processes the categories column by filling NAs with "No category specified;"
+    Processes the categories column by filling NAs with "No category specified; "
     and adding "; " at the end of each categories' instance to make it easier to split by category in the future.
+    Also creates an additional variable with a short version of each category.
 
     Args:
         data: dataframe with RECC data
@@ -134,40 +151,47 @@ def changes_to_categories(data: pd.DataFrame) -> pd.DataFrame:
         Processed dataframe.
     """
     data["categories"].fillna("No category specified; ", inplace=True)
-    data["categories"] = data["categories"].apply(
-        lambda x: x + "; " if not x.endswith("; ") else x
-    )
-
+    data["categories"] = data["categories"].apply(lambda x: x+"; " if not x.endswith("; ") else x)
+    data["short_categories"] = data["categories"].copy()
+    for cat in categories_short_names.keys():
+        data["short_categories"] = data["short_categories"].apply(lambda x: x.replace(cat, categories_short_names[cat]))
     return data
 
 
-def process_recc_data(raw_recc_data: pd.DataFrame):
+def process_recc_data(data: pd.DataFrame):
     """
     Processes raw RECC data and saves it to a csv in the ouputs folder.
     Args:
         data: dataframe with RECC data
     """
 
-    camel_case_columns(raw_recc_data)
+    print("We're processing RECC data for you...\n")
 
-    raw_recc_data = extract_info_from_date(raw_recc_data)
+    camel_case_columns(data)
 
-    raw_recc_data = process_complaint_summary(raw_recc_data)
+    data = extract_info_from_date(data)
 
-    raw_recc_data = create_dummy_variables_and_total(
-        raw_recc_data, "technologies", "tech"
+    data = process_complaint_summary(data)
+
+    data = create_dummy_variables_and_total(
+        data, "technologies", "tech"
     )
 
-    raw_recc_data = changes_to_categories(raw_recc_data)
+    data = changes_to_categories(data)
 
-    raw_recc_data = create_dummy_variables_and_total(
-        raw_recc_data, "categories", "category"
+    data = create_dummy_variables_and_total(
+        data, "short_categories", "category"
     )
 
     if not os.path.exists(outputs_local_path):
         os.mkdir(outputs_local_path)
 
-    raw_recc_data.to_csv(outputs_local_path + processed_recc_data_filename)
+    if not os.path.exists(outputs_local_path_data):
+        os.mkdir(outputs_local_path_data)
+
+    data.to_csv(outputs_local_path_data + processed_recc_data_filename)
+
+    print("RECC data is processed and can be found under '/outputs/data/'.\n")
 
 
 if __name__ == "__main__":

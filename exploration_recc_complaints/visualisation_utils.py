@@ -11,15 +11,16 @@ import pandas as pd
 import dataframe_image as dfi
 import math
 import config
+from wordcloud import WordCloud
 
 def set_spines():
     """
     Function to add or remove spines from plots.
     """
-    mpl.rcParams['axes.spines.left'] = config.left_spine
-    mpl.rcParams['axes.spines.right'] = config.right_spine
-    mpl.rcParams['axes.spines.top'] = config.top_spine
-    mpl.rcParams['axes.spines.bottom'] = config.bottom_spine
+    mpl.rcParams["axes.spines.left"] = config.left_spine
+    mpl.rcParams["axes.spines.right"] = config.right_spine
+    mpl.rcParams["axes.spines.top"] = config.top_spine
+    mpl.rcParams["axes.spines.bottom"] = config.bottom_spine
 
 
 def set_plotting_styles():
@@ -31,16 +32,18 @@ def set_plotting_styles():
 
     set_spines()
 
-    font_files = font_manager.findSystemFonts(fontpaths=["/Users/anasofiapinto/Library/Fonts/"])
+    # Had trouble making it find the font I set so this was the only way to do it
+    # without specifying the local filepath
+    font_files = font_manager.findSystemFonts(fontpaths=["/Users/"])
 
     for font_file in font_files:
         font_manager.fontManager.addfont(font_file)
 
-    mpl.rcParams['font.family'] = config.font
-    mpl.rcParams['xtick.labelsize'] = config.fontsize_normal
-    mpl.rcParams['ytick.labelsize'] = config.fontsize_normal
-    mpl.rcParams['axes.titlesize'] = config.fontsize_title
-    mpl.rcParams['axes.labelsize'] = config.fontsize_normal
+    mpl.rcParams["font.family"] = config.font
+    mpl.rcParams["xtick.labelsize"] = config.fontsize_normal
+    mpl.rcParams["ytick.labelsize"] = config.fontsize_normal
+    mpl.rcParams["axes.titlesize"] = config.fontsize_title
+    mpl.rcParams["axes.labelsize"] = config.fontsize_normal
     mpl.rcParams["legend.fontsize"] = config.fontsize_normal
     mpl.rcParams["figure.titlesize"] = config.fontsize_title
 
@@ -61,10 +64,10 @@ def max_value_to_show(values:pd.Series) -> list[int]:
     and order of magnitude.
 
     Examples:
-    1) If max in values is 71, it outputs: 80, 10
-    2) If max in values is 4987, it outputs: 5000, 1000
-    3) If max in values is 43.2, it outputs: 50, 10
-    4) If max in values is 200, it outpus: 200, 100
+    1) If max in values is 71, it outputs: [80, 10]
+    2) If max in values is 4987, it outputs: [5000, 1000]
+    3) If max in values is 43.2, it outputs: [50, 10]
+    4) If max in values is 200, it outpus: [200, 100]
 
     Args:
         values: pandas Series with all possible values
@@ -75,7 +78,7 @@ def max_value_to_show(values:pd.Series) -> list[int]:
     max_as_string = str(max_value)
     order_magnitude = 10**(len(max_as_string)-1)
 
-    if max_value%10==0:
+    if max_value%10==0 and max_value==values.max():
         max_to_show = max_value
     else:
         max_to_show = (int(max_as_string[0])+1)*order_magnitude
@@ -87,7 +90,7 @@ def compute_bins(values:pd.Series)->range:
     Automatically computes bins for an histogram given a pandas series with all possible values.
 
     Args:
-        values: pandas Serxxies with all possible values
+        values: pandas Series with all possible values
     Returns:
         The bins as a range.
     """
@@ -107,9 +110,9 @@ def add_bar_values(bar_values:pd.Series):
     for i, v in enumerate(bar_values):
         round_value = round(v)
         if v==max_x:
-            pos_x = v - 0.08*v
+            pos_x = v - 0.05*v
         else:
-            pos_x = v + 0.05*v
+            pos_x = v + 0.01*v
         if round_value<1:
             plt.text(pos_x, i-0.25, "<1%", fontsize=config.fontsize_small)
         else:
@@ -132,3 +135,45 @@ def horizontal_bar_plot(data:pd.DataFrame, y_var:str, x_var:str):
 
     if config.display_bar_values:
         add_bar_values(data[x_var])
+
+def plotting_complaints_by_dummies(data:pd.DataFrame, by:str):
+    """
+    Plots the number of complaints by a set of dummy variables
+
+    Args:
+        data: data frame with number and percentage of of complaints by a set of dummy variables
+        by: variables by which we are calculating the percentage of complaints
+    """
+
+    data["short_index"] = data["index"].str.split(":").str[1]
+
+    horizontal_bar_plot(data, "short_index", "percent_complaints") 
+    plt.title("Percentage of complaints by "+by)
+    
+    plt.tight_layout()
+    plt.savefig(config.outputs_local_path_figures+"complaints_by_"+by.replace(" ","_")+".png", dpi = config.dpi)
+
+def wordcloud(data:str | pd.DataFrame, stopwords:list, variant_name:str, generate_from_text:bool=True, max_words:int=25):
+    """
+    Generates a wordcloud image and displays generate image.
+
+    Args:
+        data: data containing the information to create the wordcloud
+        stopwords: list of stopwords
+        variant_name: variant name to appear in figure name
+        generated_from_text: wether wordcloud will be generated from a string containing all text (True)
+           or from a tf-idf matrix (False). Defaults to True.
+        max_words: max number of tokens/n-grams to add to the wordcloud
+    """
+    wordcloud = WordCloud(font_path = config.font_path_ttf, width=config.wordcloud_width, height=config.wordcloud_height, margin=0, collocations = True,
+                            stopwords=stopwords, background_color="white",
+                            max_words=max_words)
+    if generate_from_text:
+        wordcloud = wordcloud.generate(data)
+    else:
+        wordcloud = wordcloud.generate_from_frequencies(frequencies=dict(data["tf_idf"]))
+
+    #plt.figure(figsize=(20,10))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.savefig(config.outputs_local_path_figures+"wordcloud_"+variant_name+".png", dpi = config.dpi)
