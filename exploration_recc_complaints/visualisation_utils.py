@@ -144,13 +144,14 @@ def horizontal_bar_plot(data: pd.DataFrame, y_var: str, x_var: str):
         add_bar_values(data[x_var])
 
 
-def plotting_complaints_by_dummies(data: pd.DataFrame, by: str):
+def plotting_complaints_by_dummies(data: pd.DataFrame, by: str, path: str):
     """
     Plots the number of complaints by a set of dummy variables
 
     Args:
         data: data frame with number and percentage of of complaints by a set of dummy variables
         by: variables by which we are calculating the percentage of complaints
+        path: where to store figure
     """
 
     data["short_index"] = data["index"].str.split(":").str[1]
@@ -160,11 +161,7 @@ def plotting_complaints_by_dummies(data: pd.DataFrame, by: str):
 
     plt.tight_layout()
     plt.savefig(
-        config.outputs_local_path_figures
-        + "complaints_by_"
-        + by.replace(" ", "_")
-        + ".png",
-        dpi=config.dpi,
+        path + "complaints_by_" + by.replace(" ", "_") + ".png", dpi=config.dpi,
     )
 
 
@@ -172,6 +169,7 @@ def wordcloud(
     data: str | pd.DataFrame,
     stopwords: list,
     variant_name: str,
+    path: str,
     generate_from_text: bool = True,
     max_words: int = 25,
 ):
@@ -182,6 +180,7 @@ def wordcloud(
         data: data containing the information to create the wordcloud
         stopwords: list of stopwords
         variant_name: variant name to appear in figure name
+        path: where to store figure
         generated_from_text: wether wordcloud will be generated from a string containing all text (True)
            or from a tf-idf matrix (False). Defaults to True.
         max_words: max number of tokens/n-grams to add to the wordcloud
@@ -207,6 +206,5 @@ def wordcloud(
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
     plt.savefig(
-        config.outputs_local_path_figures + "wordcloud_" + variant_name + ".png",
-        dpi=config.dpi,
+        path + "wordcloud_" + variant_name + ".png", dpi=config.dpi,
     )
