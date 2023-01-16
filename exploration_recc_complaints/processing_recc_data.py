@@ -15,7 +15,6 @@ from text_analysis_utils import stemming, lemmatising
 
 # paths and file names
 processed_recc_data_filename = config.processed_recc_data_filename
-outputs_local_path = config.outputs_local_path
 outputs_local_path_data = config.outputs_local_path_data
 variants_same_expression = config.variants_same_expression
 categories_short_names = config.categories_short_names
