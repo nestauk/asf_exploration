@@ -11,8 +11,7 @@ import visualisation_utils
 import config
 from text_analysis_utils import complaints_by
 
-outputs_local_path_figures = config.outputs_local_path_figures
-
+outputs_local_path_figures_descriptive_analysis = config.outputs_local_path_figures_descriptive_analysis
 
 def plotting_complaints_per_month(complaints_per_month: pd.DataFrame):
     """
@@ -41,7 +40,7 @@ def plotting_complaints_per_month(complaints_per_month: pd.DataFrame):
     plt.title("Number of monthly complaints")
 
     plt.tight_layout()
-    plt.savefig(outputs_local_path_figures + "complaints_per_month.png", dpi=300)
+    plt.savefig(outputs_local_path_figures_descriptive_analysis + "complaints_per_month.png", dpi=300)
 
 
 def plotting_complaints_per_year(complaints_per_year: pd.DataFrame):
@@ -66,7 +65,7 @@ def plotting_complaints_per_year(complaints_per_year: pd.DataFrame):
     plt.title("Number of yearly complaints")
 
     plt.tight_layout()
-    plt.savefig(outputs_local_path_figures + "complaints_per_year.png", dpi=300)
+    plt.savefig(outputs_local_path_figures_descriptive_analysis + "complaints_per_year.png", dpi=300)
 
 
 def plotting_length_complaints(distribution_length_complaints: pd.DataFrame):
@@ -93,7 +92,7 @@ def plotting_length_complaints(distribution_length_complaints: pd.DataFrame):
 
     plt.tight_layout()
     plt.savefig(
-        outputs_local_path_figures + "distribution_length_complaints.png", dpi=300
+        outputs_local_path_figures_descriptive_analysis + "distribution_length_complaints.png", dpi=300
     )
 
 
@@ -133,7 +132,7 @@ def plotting_length_complaints_per_year(distribution_length_complaints: pd.DataF
 
     plt.tight_layout()
     plt.savefig(
-        outputs_local_path_figures + "distribution_length_complaints_yearly.png",
+        outputs_local_path_figures_descriptive_analysis + "distribution_length_complaints_yearly.png",
         dpi=300,
     )
 
@@ -144,8 +143,8 @@ if __name__ == "__main__":
     recc_data = getters.get_processed_recc_data()
 
     # creating local path to store figures if it does not exist
-    if not os.path.exists(outputs_local_path_figures):
-        os.makedirs(outputs_local_path_figures)
+    if not os.path.exists(outputs_local_path_figures_descriptive_analysis):
+        os.makedirs(outputs_local_path_figures_descriptive_analysis)
 
     # Setting plotting syle
     visualisation_utils.set_plotting_styles()
@@ -158,7 +157,7 @@ if __name__ == "__main__":
     complaints_per_year = complaints_by(recc_data, "year")
     plotting_complaints_per_year(complaints_per_year)
     visualisation_utils.pandas_df_to_figure(
-        complaints_per_year, outputs_local_path_figures, "complaints_per_year_table.png"
+        complaints_per_year, outputs_local_path_figures_descriptive_analysis, "complaints_per_year_table.png"
     )
 
     # Length of complaints
@@ -179,7 +178,7 @@ if __name__ == "__main__":
         complaints_by_tech, by="technology"
     )
     visualisation_utils.pandas_df_to_figure(
-        complaints_by_tech, outputs_local_path_figures, "complaints_by_tech_table.png"
+        complaints_by_tech, outputs_local_path_figures_descriptive_analysis, "complaints_by_tech_table.png"
     )
 
     # Number and percentage of complaints per category
@@ -194,7 +193,7 @@ if __name__ == "__main__":
     )
     visualisation_utils.pandas_df_to_figure(
         complaints_by_category,
-        outputs_local_path_figures,
+        outputs_local_path_figures_descriptive_analysis,
         "complaints_by_category_table.png",
     )
 
