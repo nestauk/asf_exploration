@@ -187,7 +187,11 @@ def process_recc_data(data: pd.DataFrame):
 
     data.to_csv(outputs_local_path_data + processed_recc_data_filename)
 
-    print("RECC data is processed and can be found under '/outputs/data/'.\n")
+    print(
+        "RECC data is processed and can be found under {}.\n".format(
+            outputs_local_path_data
+        )
+    )
 
 
 if __name__ == "__main__":

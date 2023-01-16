@@ -25,7 +25,9 @@ def download_recc_data_from_s3():
     and stores it in local inputs path (if not already there).
     """
     print(
-        "\nWe're downloading the data for you, if not already in your local inputs folder.\n"
+        "\nWe're downloading the data for you, if not already in the following folder: {}\n".format(
+            inputs_local_path
+        )
     )
     if not os.path.exists(inputs_local_path):
         os.makedirs(inputs_local_path)
