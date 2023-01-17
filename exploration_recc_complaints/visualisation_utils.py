@@ -49,6 +49,16 @@ def set_plotting_styles():
     mpl.rcParams["figure.titlesize"] = config.fontsize_title
 
 
+def finding_path_to_font(font_name: str):
+    """
+    Finds path to specific font.
+    Args:
+        font_name: name of font
+    """
+    font_files = font_manager.findSystemFonts()
+    return [f for f in font_files if font_name in f][0]
+
+
 def pandas_df_to_figure(df: pd.DataFrame, folder: str, figure_name: str):
     """
     Saves pandas DataFrame as a figure.
@@ -151,7 +161,7 @@ def plotting_complaints_by_dummies(data: pd.DataFrame, by: str, path: str):
     Args:
         data: data frame with number and percentage of of complaints by a set of dummy variables
         by: variables by which we are calculating the percentage of complaints
-        path: where to store figure
+        path: path to folder where the figure is going to be stored
     """
 
     data["short_index"] = data["index"].str.split(":").str[1]
@@ -174,19 +184,21 @@ def wordcloud(
     max_words: int = 25,
 ):
     """
-    Generates a wordcloud image and displays generate image.
+    Generates a wordcloud image and displays generated image.
 
     Args:
         data: data containing the information to create the wordcloud
         stopwords: list of stopwords
         variant_name: variant name to appear in figure name
-        path: where to store figure
+        path: path to folder where the figure is going to be stored
         generated_from_text: wether wordcloud will be generated from a string containing all text (True)
            or from a tf-idf matrix (False). Defaults to True.
         max_words: max number of tokens/n-grams to add to the wordcloud
     """
+    font_path_ttf = finding_path_to_font(config.font)
+
     wordcloud = WordCloud(
-        font_path=config.font_path_ttf,
+        font_path=font_path_ttf,
         width=config.wordcloud_width,
         height=config.wordcloud_height,
         margin=0,

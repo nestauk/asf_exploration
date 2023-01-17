@@ -20,6 +20,10 @@ Run `python3 /exploration_recc_complaints/keyword.py` to do keyword and expressi
 
 Run `python3 /exploration_recc_complaints/top_ngrams_analysis.py` to analyse top tokens and n-grams in complaints data. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures`
 
+- **RECC complaints data**
+
+Jupyter notebook `RECC complaints data` allows you to take a look a the raw and processed datasets.
+
 ## Set up 🛠️
 Open your terminal and follow the instructions:
 1. **Clone this repo:** `git clone git@github.com:nestauk/asf_exploration.git`

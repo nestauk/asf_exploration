@@ -3,8 +3,6 @@ Configuration variables.
 """
 
 # Paths and file names
-font_path = "/Users/anasofiapinto/Library/Fonts/"
-font_path_ttf = font_path + "Averta-Regular.ttf"
 s3_bucket = "asf-exploration"
 s3_path = "exploration_recc_complaints/inputs/"
 inputs_local_path = "./inputs/"
@@ -12,11 +10,13 @@ raw_recc_data_filename_xlsx = (
     "RECC_Consumer_Complaints_Data_Air_Source_Heat_Pumps_2019-2021.xlsx"
 )
 raw_recc_data_filename_csv = "recc_consumer_ashp_complaints_2019_2021.csv"
-outputs_local_path_data =  "./outputs/data/"
+outputs_local_path_data = "./outputs/data/"
 processed_recc_data_filename = "recc_processed_data_2019_2021.csv"
-outputs_local_path_figures_descriptive_analysis =  "./outputs/figures/descriptive_analysis/"
-outputs_local_path_figures_keyword_analysis =  "./outputs/figures/keyword_analysis/"
-outputs_local_path_figures_ngram_analysis =  "./outputs/figures/ngram_analysis/"
+outputs_local_path_figures_descriptive_analysis = (
+    "./outputs/figures/descriptive_analysis/"
+)
+outputs_local_path_figures_keyword_analysis = "./outputs/figures/keyword_analysis/"
+outputs_local_path_figures_ngram_analysis = "./outputs/figures/ngram_analysis/"
 
 # Plotting styles, fonts and colours
 figure_size_x = 6
@@ -74,7 +74,6 @@ categories_short_names = {
 }
 
 # Variantes of expressions in complaints data
-
 variants_same_expression = {
     "air source heat pump (ashp)": "ashp",
     "air source heat pump": "ashp",
@@ -148,6 +147,8 @@ keywords_expressions = {
     ],
     "Installation": ["installer", "installation", "installed", "installations"],
 }
+
+number_keyword_expressions_to_show = 10
 
 # Domain stopwords
 domain_stopwords = [

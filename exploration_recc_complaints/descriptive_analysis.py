@@ -3,13 +3,12 @@ Script with descriptive analysis
 """
 
 import pandas as pd
-import math
 import os
 import matplotlib.pyplot as plt
 import getters
 import visualisation_utils
 import config
-from text_analysis_utils import complaints_by
+from general_utils import complaints_by
 
 outputs_local_path_figures_descriptive_analysis = (
     config.outputs_local_path_figures_descriptive_analysis
@@ -149,24 +148,27 @@ def plotting_length_complaints_per_year(distribution_length_complaints: pd.DataF
     )
 
 
-if __name__ == "__main__":
+def descriptive_analysis(data: pd.DataFrame):
+    """
+    Produces descriptive analysis:
+    - complaints per month;
+    - complaints per year;
+    - length of complaints;
+    - length of complaints per year;
+    - number and percentage of complaints per tech type;
+    - number and percentage of complaints per category.
+
+    Args:
+        data: data to do descriptive analysis with.
+
+    """
     print("Descriptive analysis ongoing...\n")
-    # Get processed RECC data
-    recc_data = getters.get_processed_recc_data()
-
-    # creating local path to store figures if it does not exist
-    if not os.path.exists(outputs_local_path_figures_descriptive_analysis):
-        os.makedirs(outputs_local_path_figures_descriptive_analysis)
-
-    # Setting plotting syle
-    visualisation_utils.set_plotting_styles()
-
     # Complaints per month
-    complaints_per_month = complaints_by(recc_data, ["year_month", "year", "month"])
+    complaints_per_month = complaints_by(data, ["year_month", "year", "month"])
     plotting_complaints_per_month(complaints_per_month)
 
     # Complaints per year
-    complaints_per_year = complaints_by(recc_data, "year")
+    complaints_per_year = complaints_by(data, "year")
     plotting_complaints_per_year(complaints_per_year)
     visualisation_utils.pandas_df_to_figure(
         complaints_per_year,
@@ -175,18 +177,16 @@ if __name__ == "__main__":
     )
 
     # Length of complaints
-    distribution_length_complaints = complaints_by(
-        recc_data, ["complaint_length", "year"]
-    )
+    distribution_length_complaints = complaints_by(data, ["complaint_length", "year"])
     plotting_length_complaints(distribution_length_complaints)
 
     # Length of complaints per year
     plotting_length_complaints_per_year(distribution_length_complaints)
 
     # Number and percentage of complaints per tech type
-    technology_columns = [col for col in recc_data.columns if col.startswith("tech:")]
+    technology_columns = [col for col in data.columns if col.startswith("tech:")]
     complaints_by_tech = complaints_by(
-        df=recc_data, by=technology_columns, percent=True, dummy_vars=True, sort=True
+        df=data, by=technology_columns, percent=True, dummy_vars=True, sort=True
     )
     visualisation_utils.plotting_complaints_by_dummies(
         complaints_by_tech,
@@ -200,11 +200,9 @@ if __name__ == "__main__":
     )
 
     # Number and percentage of complaints per category
-    categories_columns = [
-        col for col in recc_data.columns if col.startswith("category:")
-    ]
+    categories_columns = [col for col in data.columns if col.startswith("category:")]
     complaints_by_category = complaints_by(
-        df=recc_data, by=categories_columns, percent=True, dummy_vars=True, sort=True
+        df=data, by=categories_columns, percent=True, dummy_vars=True, sort=True
     )
     visualisation_utils.plotting_complaints_by_dummies(
         complaints_by_category,
@@ -222,3 +220,18 @@ if __name__ == "__main__":
             outputs_local_path_figures_descriptive_analysis
         )
     )
+
+
+if __name__ == "__main__":
+    # Get processed RECC data
+    recc_data = getters.get_processed_recc_data()
+
+    # creating local path to store figures if it does not exist
+    if not os.path.exists(outputs_local_path_figures_descriptive_analysis):
+        os.makedirs(outputs_local_path_figures_descriptive_analysis)
+
+    # Setting plotting syle
+    visualisation_utils.set_plotting_styles()
+
+    # Descriptive analysis
+    descriptive_analysis(recc_data)

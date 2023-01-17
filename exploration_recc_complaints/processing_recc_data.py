@@ -10,7 +10,7 @@ import os
 import re
 from datetime import datetime
 from nltk import word_tokenize
-from text_analysis_utils import stemming, lemmatising
+from general_utils import stemming, lemmatising
 
 
 # paths and file names
@@ -76,6 +76,7 @@ def process_complaint_summary(data: pd.DataFrame) -> pd.DataFrame:
 
     data["complaint_length"] = data["processed_complaint_summary"].str.len()
 
+    # there are other ways we could do this
     data["tokens"] = data["processed_complaint_summary"].apply(
         lambda x: re.sub("[^A-Za-z0-9]+", " ", x)
     )
