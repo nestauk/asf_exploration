@@ -10,15 +10,15 @@ Run `python3 /exploration_recc_complaints/processing_recc_data.py` to process th
 
 - **Basic descriptive analysis**
 
-Run `python3 /exploration_recc_complaints/descriptive_analysis.py` to do descriptive analysis. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures`
+Run `python3 /exploration_recc_complaints/descriptive_analysis.py` to do descriptive analysis. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures/descriptive_analysis`
 
 - **Looking at specific keywords and expressions of interest**
 
-Run `python3 /exploration_recc_complaints/keyword.py` to do keyword and expressions analysis. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures`
+Run `python3 /exploration_recc_complaints/keyword_analysis.py` to do keyword and expressions analysis. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures/keyword_analysis`
 
 - **Analysing top n-grams in complaints text**
 
-Run `python3 /exploration_recc_complaints/top_ngrams_analysis.py` to analyse top tokens and n-grams in complaints data. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures`
+Run `python3 /exploration_recc_complaints/top_ngrams_analysis.py` to analyse top tokens and n-grams in complaints data. Outputs can be seen under `/asf_exploration/exploration_recc_complaints/outputs/figures/ngram_analysis`
 
 - **RECC complaints data**
 
