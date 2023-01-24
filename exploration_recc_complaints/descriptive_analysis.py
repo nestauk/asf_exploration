@@ -94,7 +94,7 @@ def plotting_length_complaints(distribution_length_complaints: pd.DataFrame):
         color=config.default_colour,
     )
 
-    plt.xlabel("Number of characters")
+    plt.xlabel("Number of characters in complaint text")
     plt.ylabel("Number of complaints")
     plt.title("Distribution of complaints by length")
 
@@ -136,7 +136,7 @@ def plotting_length_complaints_per_year(distribution_length_complaints: pd.DataF
             color=colors[i],
             density=True,
         )
-    ax[i].set_xlabel("Complaint length")
+    ax[i].set_xlabel("Number of characters in complaint text")
     fig.suptitle("Density of complaints yearly")
     fig.legend(years)
 

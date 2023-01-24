@@ -20,9 +20,9 @@ variants_same_expression = config.variants_same_expression
 categories_short_names = config.categories_short_names
 
 
-def camel_case_columns(df: pd.DataFrame):
+def snake_case_columns(df: pd.DataFrame):
     """
-    Transforms column names in pandas dataframe into lower and camel case.
+    Transforms column names in pandas dataframe into lower and snake case.
     """
     cols = df.columns
     cols = [c.lower() for c in cols]
@@ -106,14 +106,20 @@ def create_dummy_variables_and_total(
 
     """
 
+    # get all possible unique values in variable
+    # 'value1; value2; value1; ' -> ['value1', 'value2', 'value1', ''] -> ['value1', 'value2']
     unique_values = list(set(data[variable].unique().sum().split("; ")[:-1]))
 
     dummy_variable_names = [prefix + ":" + c for c in unique_values]
 
-    for c in range(len(unique_values)):
-        data[dummy_variable_names[c]] = data[variable].apply(
-            lambda x: 1 if unique_values[c] in x else 0
+    for i in range(len(unique_values)):
+        data[dummy_variable_names[i]] = data[variable].apply(
+            lambda x: 1 if unique_values[i] in x else 0
         )
+
+    # so that we don't count "Not specified" as one category
+    if prefix + ":Not specified" in dummy_variable_names:
+        dummy_variable_names.remove(prefix + ":Not specified")
 
     data["number_of_" + variable] = data[dummy_variable_names].sum(axis=1)
 
@@ -150,7 +156,7 @@ def changes_to_categories(data: pd.DataFrame) -> pd.DataFrame:
     Returns:
         Processed dataframe.
     """
-    data["categories"].fillna("No category specified; ", inplace=True)
+    data["categories"].fillna("Not specified; ", inplace=True)
     data["categories"] = data["categories"].apply(
         lambda x: x + "; " if not x.endswith("; ") else x
     )
@@ -171,7 +177,7 @@ def process_recc_data(data: pd.DataFrame):
 
     print("We're processing RECC data for you...\n")
 
-    camel_case_columns(data)
+    snake_case_columns(data)
 
     data = extract_info_from_date(data)
 

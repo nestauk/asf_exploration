@@ -9,7 +9,6 @@ import getters
 import pandas as pd
 import os
 import visualisation_utils
-import matplotlib.pyplot as plt
 import general_utils
 
 keywords_expressions = config.keywords_expressions
@@ -49,14 +48,10 @@ def group_keyword_expression_dummies(data):
         columns = columns + [
             "EXP:" + col for col in keywords_expressions[g] if " " in col
         ]
-        data["G:" + g] = data[columns].sum(axis=1)
-
-    group_columns = [col for col in data.columns if col.startswith("G:")]
-    for col in group_columns:
-        data[col] = data[col].apply(lambda x: 1 if x > 1 else x)
+        data["G:" + g] = data[columns].any(axis=1).astype(int)
 
 
-def performs_keyword_expression_analysis(data):
+def perform_keyword_expression_analysis(data):
     """
     Performs keyword and expression analysis:
     - Creates keywords and expression dummy variables as well as groups of these;
@@ -132,4 +127,4 @@ if __name__ == "__main__":
     visualisation_utils.set_plotting_styles()
 
     # Keywords and expressions analysis
-    performs_keyword_expression_analysis(recc_data)
+    perform_keyword_expression_analysis(recc_data)

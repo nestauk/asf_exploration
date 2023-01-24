@@ -12,6 +12,7 @@ import dataframe_image as dfi
 import math
 import config
 from wordcloud import WordCloud
+import warnings
 
 
 def set_spines():
@@ -37,7 +38,14 @@ def set_plotting_styles():
     # without specifying the local filepath
     font_files = font_manager.findSystemFonts(fontpaths=["/Users/"])
 
-    for font_file in font_files:
+    font_file = [f for f in font_files if config.font in f][0]
+    if len(font_file) > 0:
+        font_manager.fontManager.addfont(font_file)
+    else:
+        warnings.warn(
+            config.font + " font could not be located. Using 'DejaVu Sans' instead"
+        )
+        font_file = [f for f in font_files if "DejaVuSans.ttf" in f][0]
         font_manager.fontManager.addfont(font_file)
 
     mpl.rcParams["font.family"] = config.font
