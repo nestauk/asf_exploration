@@ -148,6 +148,43 @@ def plotting_length_complaints_per_year(distribution_length_complaints: pd.DataF
     )
 
 
+def plotting_distribution_complaints_by_number_cat_or_tech(
+    data: pd.DataFrame, by: str = "categories"
+):
+    """
+    Plots percentage of complaints that have a certain number of categories/technologies.
+
+    data: data frame with counts data
+    by: 'categories' or 'technologies. Defaults to 'categories'.
+    """
+
+    if by not in ["categories", "technologies"]:
+        raise ValueError("'by' should be either 'categories' or 'technologies'.")
+
+    if by == "categories":
+        y_var = "number_of_short_categories"
+    else:
+        y_var = "number_of_technologies"
+
+    data[y_var] = data[y_var].astype(str)
+
+    visualisation_utils.horizontal_bar_plot(data, y_var, "percent_complaints")
+    plt.title("Percentage of complaints by number of " + by)
+
+    plt.tight_layout()
+
+    plt.xlabel("Percentage of complaints")
+    plt.ylabel("Number of " + by)
+
+    plt.savefig(
+        outputs_local_path_figures_descriptive_analysis
+        + "percentage_complaints_by_number_of_"
+        + by
+        + ".png",
+        dpi=300,
+    )
+
+
 def descriptive_analysis(data: pd.DataFrame):
     """
     Produces descriptive analysis:
@@ -213,6 +250,30 @@ def descriptive_analysis(data: pd.DataFrame):
         complaints_by_category,
         outputs_local_path_figures_descriptive_analysis,
         "complaints_by_category_table.png",
+    )
+
+    # Percentage of complaints with a given number of categories
+    n_complaints_n_categories = complaints_by(
+        df=data,
+        by=["number_of_short_categories"],
+        percent=True,
+        dummy_vars=False,
+        sort=False,
+    )
+    plotting_distribution_complaints_by_number_cat_or_tech(
+        n_complaints_n_categories, by="categories"
+    )
+
+    # Percentage of complaints with a given number of technologies
+    n_complaints_n_tech = complaints_by(
+        df=data,
+        by=["number_of_technologies"],
+        percent=True,
+        dummy_vars=False,
+        sort=False,
+    )
+    plotting_distribution_complaints_by_number_cat_or_tech(
+        n_complaints_n_tech, by="technologies"
     )
 
     print(
