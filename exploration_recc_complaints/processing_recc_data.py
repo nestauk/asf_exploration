@@ -54,7 +54,7 @@ def process_complaint_summary(data: pd.DataFrame) -> pd.DataFrame:
     Processes complaint summary variable by:
     - Dealing with "FiT" expression;
     - Creating new variable with lower case complaint text;
-    - Merging together different air source heat pump expressions;
+    - Merging together variations of the same expression;
     - Creating a new variable with number of characters in complaint;
     - Creating a variable with the complaint summary tokens.
 
