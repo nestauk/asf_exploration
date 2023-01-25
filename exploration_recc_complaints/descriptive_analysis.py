@@ -96,7 +96,7 @@ def plotting_length_complaints(distribution_length_complaints: pd.DataFrame):
 
     plt.xlabel("Number of characters in complaint text")
     plt.ylabel("Number of complaints")
-    plt.title("Distribution of complaints by length")
+    plt.title("Distribution of complaint lengths")
 
     plt.tight_layout()
     plt.savefig(
@@ -136,8 +136,9 @@ def plotting_length_complaints_per_year(distribution_length_complaints: pd.DataF
             color=colors[i],
             density=True,
         )
+        ax[i].set_ylabel("Density")
     ax[i].set_xlabel("Number of characters in complaint text")
-    fig.suptitle("Density of complaints yearly")
+    fig.suptitle("Distribution of complaint lengths")
     fig.legend(years)
 
     plt.tight_layout()

@@ -84,7 +84,7 @@ def perform_keyword_expression_analysis(data):
     )
     # only plot for the top keywords and expressions
     stats_keywords_expressions = stats_keywords_expressions.loc[
-        : config.number_keyword_expressions_to_show
+        : config.number_keyword_expressions_to_show - 1
     ]
 
     visualisation_utils.plotting_complaints_by_dummies(
