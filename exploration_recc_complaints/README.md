@@ -8,7 +8,7 @@ The following sections summarise the work done in this exploration.
 
 ### RECC complaints data notebook
 
-Jupyter notebook `RECC complaints data` allows you to take a look a the raw and processed datasets.
+Jupyter notebook `RECC complaints data.ipynb` allows you to take a look a the raw and processed datasets.
 
 ### Processed RECC data
 
