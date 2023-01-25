@@ -23,18 +23,12 @@ outputs_local_path_figures_ngram_analysis = (
 domain_stopwords = config.domain_stopwords
 top_ngrams_variants = config.top_ngrams_variants
 
-
-def stopwords_definition(text_process: str = "normal") -> list:
+def english_stopwords_definition() -> list:
     """
-    Function to define stopwords, by putting together NLTK, gensim,
-    as well as domain stopwords. Defaults to "normal".
-    If text_process different from "normal", it applies stemming or lemmatising (accordingly).
-
-    Args:
-        text_process: either "normal", "stemming" or "lemmatising"
+    Defines English stopwords by putting together NLTK and gensim stopwords.
 
     Returns:
-        A list of stopwords.
+        A list of English stopwords.
     """
     sw_nltk = stopwords.words("english")
     sw_gensim = [s for s in STOPWORDS if s not in sw_nltk]
@@ -42,6 +36,23 @@ def stopwords_definition(text_process: str = "normal") -> list:
         sw_gensim.remove(w)
 
     stopwords_list = sw_nltk + sw_gensim
+
+    return stopwords_list
+
+
+def stopwords_definition(text_process: str = "normal") -> list:
+    """
+    Defines a list of stopwords, by putting together English stopwords
+    with domain stopwords. 
+    If text_process different from "normal", it applies stemming or lemmatising (accordingly).
+
+    Args:
+        text_process: either "normal", "stemming" or "lemmatising" (Defaults to "normal")
+
+    Returns:
+        A list of stopwords.
+    """
+    stopwords_list = english_stopwords_definition()
 
     stopwords_list = stopwords_list + domain_stopwords
 
@@ -119,7 +130,8 @@ def compute_tf_idf_dataframe(data, text_process, filter_var=None) -> pd.DataFram
 
     # creates tf-idf dataframe
     vectorizer = TfidfVectorizer(
-        norm=None, ngram_range=(config.ngram_min, config.ngram_max), use_idf=False
+        norm=None, ngram_range=(config.ngram_min, config.ngram_max), use_idf=False,
+        stop_words=english_stopwords_definition()
     )
     x = vectorizer.fit_transform(corpus)
     x_features = vectorizer.get_feature_names_out()
@@ -134,11 +146,12 @@ def compute_tf_idf_dataframe(data, text_process, filter_var=None) -> pd.DataFram
         data.reset_index(inplace=True)
 
         df_tfidfvect = df_tfidfvect[df_tfidfvect[filter_var] == 1]
-        df_tfidfvect.drop(filter_var, axis=1)
+        df_tfidfvect.drop(filter_var, axis=1, inplace=True)
 
     # averages tf-idf values so that we have 1 tf-idf value per n-gram
     df_tfidfvect = pd.DataFrame(df_tfidfvect.mean(axis=0))
     df_tfidfvect.columns = ["tf_idf"]
+    print(df_tfidfvect)
 
     return df_tfidfvect
 
@@ -154,7 +167,7 @@ def prepare_data_for_wordcloud(
 
     Args:
         data: dataframe with text variable
-        generate_from_text: wether wordcloud will be generated from a string containing all text (True)
+        generate_from_text: whether wordcloud will be generated from a string containing all text (True)
            or from a tf-idf matrix (False). Defaults to True.
         text_process: either "normal", "stemming" or "lemmatising". Defaults to "normal".
         filter_var: variable to filter data by
