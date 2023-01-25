@@ -23,6 +23,7 @@ outputs_local_path_figures_ngram_analysis = (
 domain_stopwords = config.domain_stopwords
 top_ngrams_variants = config.top_ngrams_variants
 
+
 def english_stopwords_definition() -> list:
     """
     Defines English stopwords by putting together NLTK and gensim stopwords.
@@ -130,8 +131,10 @@ def compute_tf_idf_dataframe(data, text_process, filter_var=None) -> pd.DataFram
 
     # creates tf-idf dataframe
     vectorizer = TfidfVectorizer(
-        norm=None, ngram_range=(config.ngram_min, config.ngram_max), use_idf=False,
-        stop_words=english_stopwords_definition()
+        norm=None,
+        ngram_range=(config.ngram_min, config.ngram_max),
+        use_idf=False,
+        stop_words=english_stopwords_definition(),
     )
     x = vectorizer.fit_transform(corpus)
     x_features = vectorizer.get_feature_names_out()
@@ -151,7 +154,6 @@ def compute_tf_idf_dataframe(data, text_process, filter_var=None) -> pd.DataFram
     # averages tf-idf values so that we have 1 tf-idf value per n-gram
     df_tfidfvect = pd.DataFrame(df_tfidfvect.mean(axis=0))
     df_tfidfvect.columns = ["tf_idf"]
-    print(df_tfidfvect)
 
     return df_tfidfvect
 
