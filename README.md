@@ -8,6 +8,8 @@ Each exploration is in its own sub-directory, which can be navigated using the D
 
 ## 📖 Directory
 
+[**Exploration of RECC cpmplaints data**](/exploration_recc_complaints): exploratory data analysis of 3 years of RECC complaints.
+
 **< Project name (with link to sub-directory) >**
 < Short description of project and links to any key resources >
 
