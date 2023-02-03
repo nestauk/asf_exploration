@@ -36,19 +36,22 @@ def set_plotting_styles():
 
     # Had trouble making it find the font I set so this was the only way to do it
     # without specifying the local filepath
-    font_files = font_manager.findSystemFonts(fontpaths=["/Users/"])
+    all_font_files = font_manager.findSystemFonts()
 
-    font_file = [f for f in font_files if config.font in f][0]
-    if len(font_file) > 0:
-        font_manager.fontManager.addfont(font_file)
-    else:
-        warnings.warn(
-            config.font + " font could not be located. Using 'DejaVu Sans' instead"
-        )
-        font_file = [f for f in font_files if "DejaVuSans.ttf" in f][0]
-        font_manager.fontManager.addfont(font_file)
+    try:
+        mpl.rcParams["font.family"] = "sans-serif"
+        font_files = [f for f in all_font_files if config.font_type in f]
+        for font_file in font_files:
+            font_manager.fontManager.addfont(font_file)
+        mpl.rcParams["font.sans-serif"] = config.font
+    except:
+        print(config.font + " font could not be located. Using 'DejaVu Sans' instead")
+        font_files = [f for f in all_font_files if "DejaVuSans.ttf" in f][0]
+        for font_file in font_files:
+            font_manager.fontManager.addfont(font_file)
+        mpl.rcParams["font.family"] = "sans-serif"
+        mpl.rcParams["font.sans-serif"] = "DejaVu Sans"
 
-    mpl.rcParams["font.family"] = config.font
     mpl.rcParams["xtick.labelsize"] = config.fontsize_normal
     mpl.rcParams["ytick.labelsize"] = config.fontsize_normal
     mpl.rcParams["axes.titlesize"] = config.fontsize_title
@@ -63,8 +66,12 @@ def finding_path_to_font(font_name: str):
     Args:
         font_name: name of font
     """
-    font_files = font_manager.findSystemFonts()
-    return [f for f in font_files if font_name in f][0]
+
+    all_font_files = font_manager.findSystemFonts()
+    font_files = [f for f in all_font_files if font_name in f]
+    if len(font_files) == 0:
+        font_files = [f for f in all_font_files if "DejaVuSans.ttf" in f]
+    return font_files[0]
 
 
 def pandas_df_to_figure(df: pd.DataFrame, folder: str, figure_name: str):
@@ -203,7 +210,7 @@ def wordcloud(
            or from a tf-idf matrix (False). Defaults to True.
         max_words: max number of tokens/n-grams to add to the wordcloud
     """
-    font_path_ttf = finding_path_to_font(config.font)
+    font_path_ttf = finding_path_to_font(config.font_type)
 
     wordcloud = WordCloud(
         font_path=font_path_ttf,

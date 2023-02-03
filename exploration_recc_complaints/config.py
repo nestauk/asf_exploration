@@ -31,6 +31,7 @@ right_spine = False
 top_spine = False
 bottom_spine = True
 
+font_type = "Averta-Regular"
 font = "Averta"
 title_font = "Averta"
 fontsize_title = 16

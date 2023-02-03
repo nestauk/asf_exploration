@@ -81,3 +81,5 @@ Open your terminal and follow the instructions:
 5. **Install package dependencies:** `pip3 install -r requirements.txt`
 
 6. **Add your conda environment to the notebooks:** `python3 -m ipykernel install --user --name=exploration_recc_complaints`
+
+7. **Install the [Averta Regular font](https://github.com/deblynprado/neon/blob/master/fonts/averta/Averta-Regular.ttf)**
