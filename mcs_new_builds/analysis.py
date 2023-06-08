@@ -1,3 +1,20 @@
+# -*- coding: utf-8 -*-
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     custom_cell_magics: kql
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.11.2
+#   kernelspec:
+#     display_name: mcs_new_builds
+#     language: python
+#     name: mcs_new_builds
+# ---
+
 # %% [markdown]
 # ### Imports and setup
 
@@ -12,6 +29,8 @@ import numpy as np
 epc_path = "/Users/chris.williamson/Documents/ASF_data"
 
 # %%
+# Get installation data with each property's entire EPC history attached
+# meaning that each property might be represented more than once
 mcs = get_mcs_installations("full")
 
 # %%
@@ -38,6 +57,8 @@ new_uprns = [uprn for uprn in mcs.loc[mcs["TRANSACTION_TYPE"] == "new dwelling"]
 # %%
 # filter to first records
 # records not linked to an EPC are kept
+# note: assumption here is that MCS records not matched to EPC are not new builds
+# they could still be self-builds (don't need EPC if not selling/renting) but expect not many of these
 first_records = (
     mcs
     .sort_values("INSPECTION_DATE")
@@ -56,6 +77,9 @@ first_records["diff_epc_to_mcs"] = (
 # assume dwelling was built with HP if:
 # - it has an EPC indicating that it is a new dwelling
 # - time difference between first EPC inspection and HP installation is less than 1 year
+# the time difference is arbitrary but means that HP installation needs to happen either before
+# or within 1 year of the EPC inspection - this is unlikely to happen if the property is
+# not a new build
 first_records["assumed_hp_when_built"] = (
     first_records["UPRN"].isin(new_uprns)
 ) & (first_records["diff_epc_to_mcs"] < 365)
@@ -77,6 +101,19 @@ first_records.assumed_hp_when_built.value_counts()
 
 # %%
 first_records.loc[first_records["assumed_hp_when_built"]]["installer_name"].value_counts().head()
+
+# %% [markdown]
+# For these top installers, what proportion of their installations are new builds?
+
+# %%
+top_5_installers = list(first_records.loc[first_records["assumed_hp_when_built"]]["installer_name"].value_counts().head().index)
+
+# %%
+counts = first_records.loc[first_records["installer_name"].isin(top_5_installers)].groupby(["installer_name", "assumed_hp_when_built"]).size().reset_index().rename(columns={0: "count"})
+
+counts["proportion"] = counts["count"] / counts.groupby("installer_name")["count"].transform("sum")
+
+counts
 
 # %% [markdown]
 # Difference in average costs for domestic retrofits and new builds:
@@ -135,9 +172,9 @@ epc.loc[epc["UPRN"].isin(weird["UPRN"])].sort_values(["UPRN", "INSPECTION_DATE"]
 # These properties seem to be ones with an EPC certificate that says that the property is a "new dwelling" and has a HP and either:
 # * an earlier certificate with inspection date >1 year before the MCS commission date, or
 # * an MCS commission date that is >1 year after the EPC inspection date
-# 
+#
 # The former could indicate errors in the EPC dataset (why would a new dwelling have a previous certificate?)
-# 
+#
 # The latter could be properties getting their HP replaced or getting a second HP installed, or errors in the MCS dataset.
 
 # %% [markdown]
@@ -179,17 +216,16 @@ epc.loc[(epc["UPRN"].isin(bad_uprns)) & (epc["certificate_n"] == 0)]["TRANSACTIO
 # ## Summary: to report to MCS
 
 # %% [markdown]
-# * About 11% of domestic installation records in the MCS dataset relate to new builds (13,420 records).
-# 
-# * The biggest installer of new build HPs is ... with ... installations. The second and third biggest installers of new build HPs are ... (... installations) and ... (... installations).
-# 
-# * The average reported cost of a new build installation is about £840 less than a retrofit (£11,760 compared to £12,600).
-# 
+# * About 11% of domestic installation records in the MCS dataset (up to Q1 2023) relate to new builds (13,420 records).
+#
+# * The biggest installer of new build HPs is ... with ... new build installations, which corresponds to ...% of this installer’s total installations. The second and third biggest installers of new build HPs are ... (... installations / ...%) and ... (... installations / ...%).
+#
+# * The average reported cost of a new build installation is about £840 less than a retrofit (£11,760 compared to £12,600). However note that this could be a result of many other factors such as the date of the installation, physical property characteristics, etc.
+#
 # * About 83% of properties in the EPC dataset which are labelled as being new dwellings with a heat pump are not found in the MCS dataset (89,485 properties).
-# 
+#
 # * Some "new dwellings with a heat pump" in the EPC dataset appear in the MCS dataset with a commissioning date that is more than 1 year after the EPC inspection date. These could be properties getting their original heat pump replaced or getting a second heat pump installed, but they could also indicate errors in the MCS dataset.
+#
 
 # %% [markdown]
-# 
-
-
+#
