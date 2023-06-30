@@ -50,16 +50,19 @@ It also provides the following slash commands:
 git clone https://github.com/nestauk/asf_exploration.git
 
 cd asf_slackbot
-conda create -n asf_slackbot
+
+conda create -n asf_slackbot python=3.9
+
 conda activate asf_slackbot
 
-pip install --upgrade pip
 pip install -r requirements.txt
 
 python asf_little_helper.py
 ```
 
 Wait for the message _Bolt app is running!_ to appear in your terminal. 
+
+For the code to run you need the necessary credentials: `SLACK_TOKEN`, `SIGNING_SECRET` and `APP_LEVEL_TOKEN`. You should export them in the terminal (before running `python asf_little_helper.py`) by doing `export SLACK_TOKEN="XXX"` where `XXX` is your `SLACK_TOKEN` (or alternatively, create a `.env` file with all credentials). CAREFUL! Credentials (and the .env file) should NEVER be committed to GitHub.
 
 Naturally, the script needs to be running for the chatbot to work, so eventually we hope to run it permanentely on a server. For now, a temporary fix is to run it on a computer when developing, testing and demonstrating the slackbot.
 
