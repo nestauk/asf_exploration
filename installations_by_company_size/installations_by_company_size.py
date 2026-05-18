@@ -92,7 +92,6 @@ installations_per_size_per_year = installations_per_installer_per_year.group_by(
 
 # %%
 # Show the proportions of installations by each group over time - line chart
-# commission_years = installations_per_size_per_year["commission_year"].unique().sort()
 commission_years = np.arange(2013, 2025, 1)
 
 def create_colour_map(cmap, n):
